@@ -1,0 +1,25 @@
+{
+  "name": "assignment-tracker",
+  "version": "1.0.0",
+  "description": "Assignment Tracker built for Education.",
+  "main": "index.js",
+  "scripts": {
+    "backend": "NODE_ENV=development nodemon index.js",
+    "client": "cd client && npm start",
+    "dev": "NODE_ENV=development concurrently --kill-others-on-fail \"nodemon index\" \"npm run client\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tyler Angelier",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "concurrently": "^4.1.0",
+    "connect-mongo": "^2.0.3",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "express-session": "^1.16.1",
+    "mongoose": "^5.5.12",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0"
+  }
+}
