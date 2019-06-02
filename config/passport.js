@@ -5,26 +5,30 @@ const bcrypt = require('bcryptjs');
 module.exports = passport => {
   //Local Strategy
   passport.use(
-    new LocalStrategy((username, password, done) => {
-      //Match username
-      let query = { username: username };
-      User.findOne(query, (err, user) => {
-        if (err) throw err;
-        if (!user) {
-          return done(null, false, { message: 'No user found' });
-        }
-
-        //Match Password
-        bcrypt.compare(password, user.password, (err, isMatch) => {
+    new LocalStrategy(
+      { usernameField: 'email', passwordField: 'password' },
+      (username, password, done) => {
+        console.log('in passport request', username, password);
+        //Match username
+        let query = { email: username };
+        User.findOne(query, (err, user) => {
           if (err) throw err;
-          if (isMatch) {
-            return done(null, user);
-          } else {
-            return done(null, false, { message: 'Wrong Password' });
+          if (!user) {
+            return done(null, false, { message: 'No user found' });
           }
+
+          //Match Password
+          bcrypt.compare(password, user.password, (err, isMatch) => {
+            if (err) throw err;
+            if (isMatch) {
+              return done(null, user);
+            } else {
+              return done(null, false, { message: 'Wrong Password' });
+            }
+          });
         });
-      });
-    })
+      }
+    )
   );
 
   passport.serializeUser(function(user, done) {

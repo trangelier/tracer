@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
+const bodyParser = require('body-parser');
+const expressValidator = require('express-validator');
 require('dotenv').config();
 
 // DB Connect
@@ -32,13 +34,42 @@ app.use(
   session({
     secret: 'DUHbOKq811bbEDahaz1xHs8t6',
     resave: true,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: new MongoStore({
       mongooseConnection: db,
       autoRemove: 'interval',
       autoRemoveInterval: 30, // In minutes. Default
-      ttl: 1 * 8 * 60 * 60 // = 8 hours
+      ttl: 1 * 8 * 60 * 60, // = 8 hours
+      cookie: {
+        name: 'assignment-tracker'
+      }
     })
+  })
+);
+
+// Body Parser Middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+// parse application/json
+app.use(bodyParser.json());
+
+//Express Validator Middleware
+//app.use(expressValidator(middlewareOptions));
+app.use(
+  expressValidator({
+    errorFormatter: function(param, msg, value) {
+      var namespace = param.split('.'),
+        root = namespace.shift(),
+        formParam = root;
+
+      while (namespace.length) {
+        formParam += '[' + namespace.shift() + ']';
+      }
+      return {
+        param: formParam,
+        msg: msg,
+        value: value
+      };
+    }
   })
 );
 
@@ -52,6 +83,11 @@ app.get('*', (req, res, next) => {
   res.locals.user = req.user || null;
   next();
 });
+
+// Route Users
+let users = require('./routes/users');
+app.use('/api/users', users);
+app.use(function(err, req, res, next) {});
 
 //start server
 app.listen(process.env.PORT, () => {

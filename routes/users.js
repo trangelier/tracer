@@ -6,65 +6,84 @@ const passport = require('passport');
 //bring in User Models
 let User = require('../models/user');
 
-// Register Form
-router.get('/register', (req, res) => {
-  res.render('register');
-});
-
 // Register Process
 router.post('/register', (req, res) => {
-  const name = req.body.name;
+  const first_name = req.body.first_name;
+  const last_name = req.body.last_name;
   const email = req.body.email;
-  const username = req.body.username;
   const password = req.body.password;
-  const password2 = req.body.password2;
 
-  let newUser = new User({
-    name: name,
-    email: email,
-    username: username,
-    password: password
-  });
-  console.info(newUser.name);
-  bcrypt.genSalt;
-  bcrypt.genSalt(10, (err, salt) => {
-    bcrypt.hash(newUser.password, salt, (err, hash) => {
-      //Todo: Add error checking for newUser fail
-      if (err) {
-        console.error(err);
-      }
-      newUser.password = hash;
-      newUser.save(err => {
+  req.checkBody('first_name', 'First Name is required').notEmpty();
+  req.checkBody('last_name', 'Last Name is required').notEmpty();
+  req.checkBody('email', 'Email is required').notEmpty();
+  req.checkBody('email', 'Email is not valid').isEmail();
+  req.checkBody('password', 'Password is required').notEmpty();
+  let errors = req.validationErrors();
+
+  if (errors) {
+    console.log('Error with register attempt --->', errors);
+    res.status(401).send('Error with request.');
+  } else {
+    let newUser = new User({
+      first_name: first_name,
+      last_name: last_name,
+      email: email,
+      username: email.substr(0, email.indexOf('@')),
+      password: password
+    });
+
+    bcrypt.genSalt;
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(newUser.password, salt, (err, hash) => {
+        //Todo: Add error checking for newUser fail
         if (err) {
-          console.error(err);
-          return;
-        } else {
-          req.flash('success', 'You are now registered and can log in');
-          res.redirect('/users/login');
+          console.log(err);
+          res.status(500).send('Error creating account!');
         }
+        newUser.password = hash;
+        newUser.save(err => {
+          if (err) {
+            console.log(err);
+            res.status(500).send('Error creating account!');
+          } else {
+            res.status(200).send('Registration Successful');
+          }
+        });
       });
     });
-  });
-});
-
-// Login Form
-router.get('/login', (req, res) => {
-  res.render('login');
+  }
 });
 
 // Login Process
 router.post('/login', (req, res, next) => {
-  passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/users/login',
-    failureFlash: true
+  console.log('login request attempted...');
+  // passport.authenticate('local', {}, (req, res) => {
+  //   console.log('in passport callback');
+  //   res.json(req.user);
+  // });
+  passport.authenticate('local', function(err, user, info) {
+    console.log('passport info: ', info);
+    if (err) {
+      console.log('error on authenicate', err);
+      return next(err);
+    }
+    if (!user) {
+      console.log('No User Found');
+      return res.send(401);
+    }
+    req.logIn(user, function(err) {
+      if (err) {
+        return next(err);
+      }
+      return res.json(user);
+    });
   })(req, res, next);
 
   //console.log('UserName: ' + req.body.username + ' Date: ' + new Date() );
 });
 
 // Logout Process
-router.get('/logout', (req, res) => {
+router.post('/logout', (req, res) => {
   if (req.session) {
     // delete session object
     req.logout();

@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-  MDBRow,
-  MDBCol,
-  MDBCard,
-  MDBIcon,
-  MDBBtn,
-  MDBContainer,
-  MDBView,
-  MDBCardBody,
-  MDBMask
-} from 'mdbreact';
+import { MDBCard, MDBContainer, MDBView, MDBCardBody, MDBMask } from 'mdbreact';
 
 const AboutPage = () => {
   return (
@@ -27,7 +17,11 @@ const AboutPage = () => {
                   graduate from Valdosta State University. I am currently
                   employed at Valdosta State University's Information Technology
                   Department as a Programmer Analyst II. My Gitbub is at{' '}
-                  <a href='https://github.com/trangelier' target='_blank'>
+                  <a
+                    href='https://github.com/trangelier'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
                     https://github.com/trangelier{'. '}
                   </a>
                   I have a passion for anything code or cars.

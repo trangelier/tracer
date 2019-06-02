@@ -7,7 +7,8 @@ import {
   MDBNavLink,
   MDBNavbarToggler,
   MDBContainer,
-  MDBCollapse
+  MDBCollapse,
+  MDBBtn
 } from 'mdbreact';
 import LoginModal from './LoginModal';
 
@@ -64,7 +65,9 @@ export default class Navbar extends Component {
               </MDBNavbarNav>
               <MDBNavbarNav right>
                 <MDBNavItem>
-                  <MDBNavLink onClick={this.toggle(1)}>Login</MDBNavLink>
+                  <MDBBtn onClick={this.toggle(1)} color='indigo'>
+                    Login
+                  </MDBBtn>
                 </MDBNavItem>
               </MDBNavbarNav>
             </MDBCollapse>
