@@ -12,8 +12,38 @@ import {
   MDBInput
 } from 'mdbreact';
 import './LandingPage.css';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { registerUser } from '../actions/authActions';
 
 class LandingPage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      first_name: '',
+      last_name: '',
+      email: '',
+      password: ''
+    };
+
+    this.onChange = this.onChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  onChange(e) {
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  }
+
+  handleSubmit = e => {
+    e.preventDefault();
+
+    const newUser = { ...this.state };
+
+    this.props.registerUser(newUser, this.props.history);
+  };
+
   render() {
     return (
       <div id='LandingPage'>
@@ -43,44 +73,76 @@ class LandingPage extends Component {
                 <MDBCol md='6' xl='5' className='mb-4'>
                   <MDBCard id='classic-card'>
                     <MDBCardBody className='z-depth-2 white-text'>
-                      <h3 className='text-center'>
-                        <MDBIcon icon='user' /> Register:
-                      </h3>
-                      <hr className='hr-light' />
-                      <MDBInput label='Your name' icon='user' />
-                      <MDBInput label='Your email' icon='envelope' />
-                      <MDBInput
-                        label='Your password'
-                        icon='lock'
-                        type='password'
-                      />
-                      <div className='text-center mt-4 black-text'>
-                        <MDBBtn color='indigo'>Sign Up</MDBBtn>
+                      <form>
+                        <h3 className='text-center'>
+                          <MDBIcon icon='user' /> Register:
+                        </h3>
                         <hr className='hr-light' />
-                        <div className='text-center d-flex justify-content-center white-label'>
-                          <a href='#!' className='p-2 m-2'>
-                            <MDBIcon
-                              fab
-                              icon='twitter'
-                              className='white-text'
-                            />
-                          </a>
-                          <a href='#!' className='p-2 m-2'>
-                            <MDBIcon
-                              fab
-                              icon='linkedin-in'
-                              className='white-text'
-                            />
-                          </a>
-                          <a href='#!' className='p-2 m-2'>
-                            <MDBIcon
-                              fab
-                              icon='instagram'
-                              className='white-text'
-                            />
-                          </a>
+                        <MDBInput
+                          name='first_name'
+                          label='Your first name'
+                          icon='file-signature'
+                          className='white-text'
+                          value={this.state.first_name}
+                          onChange={this.onChange}
+                        />
+                        <MDBInput
+                          name='last_name'
+                          label='Your last name'
+                          icon='signature'
+                          className='white-text'
+                          value={this.state.last_name}
+                          onChange={this.onChange}
+                        />
+                        <MDBInput
+                          name='email'
+                          label='Your email'
+                          icon='envelope'
+                          className='white-text'
+                          value={this.state.email}
+                          onChange={this.onChange}
+                        />
+                        <MDBInput
+                          name='password'
+                          label='Your password'
+                          icon='lock'
+                          type='password'
+                          className='white-text'
+                          value={this.state.password}
+                          onChange={this.onChange}
+                        />
+
+                        <div className='text-center mt-4 black-text'>
+                          <MDBBtn color='indigo' onClick={this.handleSubmit}>
+                            Sign Up
+                          </MDBBtn>
+
+                          <hr className='hr-light' />
+                          <div className='text-center d-flex justify-content-center white-label'>
+                            <a href='#!' className='p-2 m-2'>
+                              <MDBIcon
+                                fab
+                                icon='twitter'
+                                className='white-text'
+                              />
+                            </a>
+                            <a href='#!' className='p-2 m-2'>
+                              <MDBIcon
+                                fab
+                                icon='linkedin-in'
+                                className='white-text'
+                              />
+                            </a>
+                            <a href='#!' className='p-2 m-2'>
+                              <MDBIcon
+                                fab
+                                icon='instagram'
+                                className='white-text'
+                              />
+                            </a>
+                          </div>
                         </div>
-                      </div>
+                      </form>
                     </MDBCardBody>
                   </MDBCard>
                 </MDBCol>
@@ -93,4 +155,15 @@ class LandingPage extends Component {
   }
 }
 
-export default LandingPage;
+LandingPage.propTypes = {
+  registerUser: PropTypes.func.isRequired
+};
+
+const mapStateToProps = state => ({
+  user: state.user
+});
+
+export default connect(
+  mapStateToProps,
+  { registerUser }
+)(LandingPage);
