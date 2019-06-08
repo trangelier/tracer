@@ -55,31 +55,9 @@ router.post('/register', (req, res) => {
 });
 
 // Login Process
-router.post('/login', (req, res, next) => {
-  console.log('login request attempted...');
-  // passport.authenticate('local', {}, (req, res) => {
-  //   console.log('in passport callback');
-  //   res.json(req.user);
-  // });
-  passport.authenticate('local', function(err, user, info) {
-    console.log('passport info: ', info);
-    if (err) {
-      console.log('error on authenicate', err);
-      return next(err);
-    }
-    if (!user) {
-      console.log('No User Found');
-      return res.send(401);
-    }
-    req.logIn(user, function(err) {
-      if (err) {
-        return next(err);
-      }
-      return res.json(user);
-    });
-  })(req, res, next);
-
-  //console.log('UserName: ' + req.body.username + ' Date: ' + new Date() );
+router.post('/login', passport.authenticate('local'), (req, res) => {
+  let { first_name, last_name, email, username } = req.user;
+  res.json({ first_name, last_name, email, username });
 });
 
 // Logout Process

@@ -7,6 +7,7 @@
     "backend": "NODE_ENV=development nodemon index.js",
     "client": "cd client && npm start",
     "dev": "NODE_ENV=development concurrently --kill-others-on-fail \"nodemon index\" \"npm run client\"",
+    "install": "npm install && cd ./client && npm install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Tyler Angelier",
