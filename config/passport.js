@@ -12,14 +12,14 @@ module.exports = passport => {
         //Match username
         let query = { email: username };
         User.findOne(query, (err, user) => {
-          if (err) throw err;
+          if (err) return err;
           if (!user) {
             return done(null, false, { message: 'No user found' });
           }
 
           //Match Password
           bcrypt.compare(password, user.password, (err, isMatch) => {
-            if (err) throw err;
+            if (err) return err;
             if (isMatch) {
               return done(null, user);
             } else {

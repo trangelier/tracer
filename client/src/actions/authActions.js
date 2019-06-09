@@ -1,4 +1,4 @@
-import { SET_CURRENT_USER } from './types';
+import { SET_CURRENT_USER, ADD_ERROR, REMOVE_ERROR } from './types';
 import axios from 'axios';
 
 // Register User
@@ -15,9 +15,12 @@ export const registerUser = (userData, history) => dispatch => {
 // Login User - Get User Token
 export const loginUser = (userData, history) => dispatch => {
   axios
-    .post(`/api/users/login`, userData)
+    .post(`/api/users/login`, userData, {
+      headers: { 'Content-Type': 'application/json' }
+    })
     .then(response => {
       console.log(response.data);
+      let userData = response.data;
       // const { token } = response.data;
       // Set token to local storage
       // localStorage.setItem('jwtToken', token);
@@ -28,12 +31,19 @@ export const loginUser = (userData, history) => dispatch => {
       // Decode token to get user data
       // const decoded = jwt_decode(token);
       // Set current user
-      // dispatch(setCurrentUser(userData));
+      dispatch(setCurrentUser(userData));
 
       // send user to dashboard
-      // history.push('/app');
+      history.push('/');
     })
-    .catch(err => console.log('errors', err));
+    .catch(err => {
+      console.log('error on login', err);
+      dispatch(addLoginError({ error: 'Error! Incorrect email or password.' }));
+    });
+};
+
+export const removeError = () => dispatch => {
+  dispatch(removeLoginError());
 };
 
 // Set Authorization header
@@ -70,6 +80,22 @@ export const currentUser = userData => dispatch => {
 export const setCurrentUser = decoded => {
   return {
     type: SET_CURRENT_USER,
+    payload: decoded
+  };
+};
+
+// Set logged in user
+export const addLoginError = decoded => {
+  return {
+    type: ADD_ERROR,
+    payload: decoded
+  };
+};
+
+// Set logged in user
+export const removeLoginError = decoded => {
+  return {
+    type: REMOVE_ERROR,
     payload: decoded
   };
 };

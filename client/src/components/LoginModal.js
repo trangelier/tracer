@@ -5,9 +5,10 @@ import {
   MDBModalHeader,
   MDBModalFooter,
   MDBInput,
-  MDBBtn
+  MDBBtn,
+  MDBAlert
 } from 'mdbreact';
-import { loginUser } from '../actions/authActions';
+import { loginUser, removeError } from '../actions/authActions';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -38,6 +39,7 @@ class LoginModal extends React.Component {
   };
 
   render() {
+    console.log('this.props.loginErrors', this.props.loginErrors);
     return (
       <MDBModal isOpen={this.props.modal1} toggle={this.props.toggle(1)}>
         <MDBModalHeader
@@ -48,6 +50,20 @@ class LoginModal extends React.Component {
           Sign in
         </MDBModalHeader>
         <MDBModalBody>
+          {this.props.loginErrors.length > 0 ? (
+            <MDBAlert
+              color='warning'
+              dismiss
+              onClose={() => {
+                this.props.removeError();
+              }}
+            >
+              {this.props.loginErrors[0].error}
+            </MDBAlert>
+          ) : (
+            ''
+          )}
+          <div />
           <form className='mx-3 grey-text'>
             <MDBInput
               name='email'
@@ -84,14 +100,16 @@ class LoginModal extends React.Component {
 }
 
 LoginModal.propTypes = {
-  loginUser: PropTypes.func.isRequired
+  loginUser: PropTypes.func.isRequired,
+  removeError: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  user: state.user
+  user: state.auth.user,
+  loginErrors: state.auth.loginErrors
 });
 
 export default connect(
   mapStateToProps,
-  { loginUser }
+  { loginUser, removeError }
 )(LoginModal);
