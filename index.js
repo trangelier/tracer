@@ -53,7 +53,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 //Express Validator Middleware
-//app.use(expressValidator(middlewareOptions));
 app.use(
   expressValidator({
     errorFormatter: function(param, msg, value) {
@@ -87,6 +86,11 @@ app.get('*', (req, res, next) => {
 // Route Users
 let users = require('./routes/users');
 app.use('/api/users', users);
+app.use(function(err, req, res, next) {});
+
+// Route Users
+let semesters = require('./routes/semesters');
+app.use('/api/semesters', semesters);
 app.use(function(err, req, res, next) {});
 
 //start server

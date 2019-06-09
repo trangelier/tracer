@@ -8,7 +8,6 @@ module.exports = passport => {
     new LocalStrategy(
       { usernameField: 'email', passwordField: 'password' },
       (username, password, done) => {
-        console.log('in passport request', username, password);
         //Match username
         let query = { email: username };
         User.findOne(query, (err, user) => {
